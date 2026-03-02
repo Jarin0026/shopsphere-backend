@@ -19,27 +19,28 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+   @Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-            .cors(cors -> {})
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session ->
-                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(
-                            "/api/auth/**",
-                            "/api/products/**",
-                            "/api/categories/**",
-                            "/ws/**"
-                    ).permitAll()
-                    .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+    http
+        .cors(cors -> {})
+        .csrf(csrf -> csrf.disable())
+        .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        )
+        .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/products/**").permitAll()
+                .requestMatchers("/api/categories/**").permitAll()
+                
+                
+                .requestMatchers("/admin/**").hasRole("ADMIN")
 
-        return http.build();
-    }
+                .anyRequest().authenticated()
+        )
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+    return http.build();
+}
 
 }
